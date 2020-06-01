@@ -33,8 +33,8 @@ void RGBProcessing::glassTracking(int argc, char** argv)
 
    //thread t(RGBProcessing::detec, cap);
 
-   tracker.traitementCouleur(cap);
-   //tracker.glassesTracking(cap);
+   //tracker.traitementCouleur(cap);
+   tracker.glassesTracking(cap);
 
    //t.join();
 }
