@@ -3,10 +3,10 @@
 #include <thread>
 #include <opencv2/videoio.hpp>
 
-class RGBProcessing
+class ToolsManager
 {
 public:
-   RGBProcessing() {};
+   ToolsManager() {};
 
    void glassTracking(int argc, char** argv);
 

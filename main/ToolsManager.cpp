@@ -21,7 +21,7 @@
 using namespace cv;
 using namespace std;
 
-void RGBProcessing::glassTracking(int argc, char** argv)
+void ToolsManager::glassTracking(int argc, char** argv)
 {
    TrackingTools tracker;
    VideoCapture cap;
@@ -31,7 +31,7 @@ void RGBProcessing::glassTracking(int argc, char** argv)
    else
       cap = VideoCapture(argv[1]);
 
-   //thread t(RGBProcessing::detec, cap);
+   //thread t(ToolsManager::detec, cap);
 
    //tracker.traitementCouleur(cap);
    tracker.glassesTracking(cap);
@@ -39,7 +39,7 @@ void RGBProcessing::glassTracking(int argc, char** argv)
    //t.join();
 }
 
-void RGBProcessing::detec(VideoCapture cap)
+void ToolsManager::detec(VideoCapture cap)
 {
    Mat src;
    vector<Vec3f> circles;
