@@ -1,4 +1,4 @@
-#include "RGBProcessing.hpp"
+#include "ToolsManager.hpp"
 
 #include <iostream>
 #include <opencv2/highgui.hpp>
@@ -10,8 +10,8 @@
 #include <sstream>
 #include <string>
 #include <thread>
-#include "TrackingTools.hpp"
-#include "DetectionTools.hpp"
+#include "tools/TrackingTools.hpp"
+#include "tools/DetectionTools.hpp"
 
 
 #include "opencv2/imgcodecs.hpp"

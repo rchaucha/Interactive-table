@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
-#include "RGBProcessing.hpp"
+#include "ToolsManager.hpp"
 
 using namespace cv;
 using namespace std;
