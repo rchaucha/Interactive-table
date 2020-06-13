@@ -10,8 +10,6 @@ public:
 
    virtual void run(cv::Mat frame) override;
    virtual bool catchEvent(sf::Event event) override;
-   virtual std::vector<sf::Drawable> getDrawables(sf::Event event) override;
-
-private:
+   virtual std::vector<std::unique_ptr<sf::Drawable>> getDrawables() override;
 };
 

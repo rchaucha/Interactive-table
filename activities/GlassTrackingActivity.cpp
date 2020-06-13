@@ -1,22 +1,46 @@
 #include "activities/GlassTrackingActivity.hpp"
 
-#include <tools/TrackingTools.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-GlassTrackingActivity::GlassTrackingActivity(VideoCapture& cap):
-   _cap(cap)
-{}
+using namespace cv;
+using namespace std;
+using namespace sf;
+
+GlassTrackingActivity::GlassTrackingActivity(Mat frame)
+{
+   _glasses_tracking.init(frame);
+   _last_frame = frame;
+}
 
 void GlassTrackingActivity::run(cv::Mat frame)
 {
-   TrackingTools::glassesTracking(_cap);
+   _glasses_tracking.update(frame);
+   _last_frame = frame;
 }
 
 bool GlassTrackingActivity::catchEvent(sf::Event event)
 {
+   if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
+   {
+      cout << "Reinitialisation des trackers" << endl;
+      _glasses_tracking.init(_last_frame);
+
+      return true;
+   }
    return false;
 }
 
-std::vector<sf::Drawable> GlassTrackingActivity::getDrawables(sf::Event event)
+vector<unique_ptr<Drawable>> GlassTrackingActivity::getDrawables()
 {
-   return std::vector<sf::Drawable>();
+   vector<unique_ptr<sf::Drawable>> drawables;
+   vector<cv::Rect2d> roi = _glasses_tracking.getROI();
+
+   for (cv::Rect2d rect : roi)
+   {
+      sf::RectangleShape* rectangle = new RectangleShape(Vector2f(rect.width, rect.height));
+      rectangle->setPosition(rect.x, rect.y);
+      drawables.push_back(unique_ptr<sf::RectangleShape>(rectangle));
+   }
+
+   return drawables;
 }

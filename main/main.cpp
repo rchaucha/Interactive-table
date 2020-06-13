@@ -17,9 +17,8 @@ int main(int argc, char** argv)
       MenuActivity menu;
       Window window(menu, cap);
 
-
+      window.launch();
    }
-
 
    return 0;
 }

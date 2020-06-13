@@ -14,6 +14,8 @@ public:
    virtual bool catchEvent(sf::Event event) = 0;
 
    /* Proposer un event à récuperer. Si l'event est récupéré, on renvoie vrai */
-   virtual std::vector<sf::Drawable> getDrawables(sf::Event event) = 0;
+   virtual std::vector<std::unique_ptr<sf::Drawable>> getDrawables() = 0;
 
+protected:
+   cv::Mat _last_frame;
 };

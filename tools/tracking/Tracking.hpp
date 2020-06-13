@@ -6,6 +6,7 @@
 
 class Tracking
 {
+public:
    /* Initialise les trackers
       Retourne faux si aucun verre n'a été trouvé */
    virtual bool init(cv::Mat frame) = 0;
@@ -15,10 +16,10 @@ class Tracking
    virtual bool update(cv::Mat frame) = 0;
 
    /* Renvoie les rectangles d'intérêt (ROI) */
-   std::vector<cv::Rect2d> getROI(cv::Mat frame) { return _roi; }
+   std::vector<cv::Rect2d> getROI() { return _roi; }
 
 protected:
    cv::Ptr<cv::MultiTracker> _multi_tracker;
-   vector<cv::Rect2d> _roi;
+   std::vector<cv::Rect2d> _roi;
 };
 
