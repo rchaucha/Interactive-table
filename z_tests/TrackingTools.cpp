@@ -1,6 +1,6 @@
 #include "TrackingTools.hpp"
 
-#include "DetectionTools.hpp"
+#include "tools/detection/DetectionTools.hpp"
 
 
 // Permet de traquer les objets en fonction des filtres de couleurs HSV via sliders

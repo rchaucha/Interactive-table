@@ -1,5 +1,5 @@
 #include <opencv2/tracking.hpp>
-#include "DetectionTools.hpp"
+#include "tools/detection/DetectionTools.hpp"
 
 #include <iostream>
 
@@ -27,7 +27,7 @@ namespace cv {
          Mat hanWin;
          Mat G;          //goal
          Mat H, A, B;    //state
-         vector<Rect2d> circles;
+         std::vector<Rect2d> circles;
 
          int frame_counter;
 

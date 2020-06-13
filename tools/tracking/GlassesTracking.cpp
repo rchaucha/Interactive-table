@@ -5,7 +5,7 @@
 using namespace std;
 using namespace cv;
 
-bool GlassesTracking::init(Mat frame)
+bool GlassesTracking::init(const Mat frame)
 {
    _roi = DetectionTools::glasses(frame);
 
@@ -20,17 +20,18 @@ bool GlassesTracking::init(Mat frame)
    return true;
 }
 
-bool GlassesTracking::update(Mat frame)
+void GlassesTracking::update(const Mat frame)
 {
-   if (frame.rows == 0 || frame.cols == 0)  // stop the program if no more images
-      return false;
+   // Si des verres ont été détecté, on traque, sinon on détecte
+   if (_roi.size() > 1)
+   {
+      _roi.clear();
 
-   _roi.clear();
+      _multi_tracker->update(frame);
 
-   _multi_tracker->update(frame);
-
-   for (unsigned i = 0; i < _multi_tracker->getObjects().size(); i++)
-      _roi.push_back(_multi_tracker->getObjects()[i]);
-   
-   return true;
+      for (unsigned i = 0; i < _multi_tracker->getObjects().size(); i++)
+         _roi.push_back(_multi_tracker->getObjects()[i]);
+   }
+   else
+      init(frame);
 }

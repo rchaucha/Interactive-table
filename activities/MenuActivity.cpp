@@ -1,8 +1,10 @@
 #include "MenuActivity.hpp"
 
 using namespace cv;
+using namespace std;
 
-MenuActivity::MenuActivity()
+MenuActivity::MenuActivity(const sf::Vector2u window_size):
+   MainActivity(window_size)
 {}
 
 void MenuActivity::run(cv::Mat frame)
@@ -15,7 +17,7 @@ bool MenuActivity::catchEvent(sf::Event event)
    return false;
 }
 
-std::vector<sf::Drawable> MenuActivity::getDrawables(sf::Event event)
+vector<unique_ptr<sf::Drawable>> MenuActivity::getDrawables() const
 {
-   return std::vector<sf::Drawable>();
+   return vector<unique_ptr<sf::Drawable>>();
 }

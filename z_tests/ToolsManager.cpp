@@ -10,8 +10,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
-#include "tools/TrackingTools.hpp"
-#include "tools/DetectionTools.hpp"
+#include "tools/detection/DetectionTools.hpp"
 
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"

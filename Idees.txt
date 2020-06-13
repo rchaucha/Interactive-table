@@ -5,5 +5,5 @@ LONG TERME
 
 COURT TERME
 {
-	
+	Faire un menu : un seul bouton au centre qui affiche toutes les options de jeu lorsqu'on clique dessus
 }

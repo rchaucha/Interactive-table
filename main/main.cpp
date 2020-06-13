@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "gui/Window.hpp"
+#include "gui/GUI.hpp"
 #include "activities/MenuActivity.hpp"
 
 using namespace cv;
@@ -14,10 +14,12 @@ int main(int argc, char** argv)
       cerr << "La webcam est introuvable" << endl;
    else
    {
-      MenuActivity menu;
-      Window window(menu, cap);
+      sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Interactive table", sf::Style::Fullscreen);
+      MenuActivity menu(window.getSize());
 
-      window.launch();
+      GUI gui(&menu, window, cap);
+
+      gui.launch();
    }
 
    return 0;
