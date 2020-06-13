@@ -13,7 +13,6 @@
 #include "tools/TrackingTools.hpp"
 #include "tools/DetectionTools.hpp"
 
-
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -21,20 +20,14 @@
 using namespace cv;
 using namespace std;
 
-void ToolsManager::glassTracking(int argc, char** argv)
+void ToolsManager::glassTracking()
 {
-   TrackingTools tracker;
-   VideoCapture cap;
-
-   if (argc != 2)
-      cap.open(0);
-   else
-      cap = VideoCapture(argv[1]);
+   
 
    //thread t(ToolsManager::detec, cap);
 
    //tracker.traitementCouleur(cap);
-   tracker.glassesTracking(cap);
+   //TrackingTools::glassesTracking(cap);
 
    //t.join();
 }

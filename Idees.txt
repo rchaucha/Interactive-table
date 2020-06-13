@@ -1,0 +1,9 @@
+LONG TERME
+{
+	Transformer les outils de tracking / détection ainsi que les activités en DLL pour pouvoir les ajouter à la volée
+}
+
+COURT TERME
+{
+	
+}

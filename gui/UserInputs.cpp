@@ -8,8 +8,8 @@ using namespace cv;
 
 void UserInputs::CallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
-   if (event == EVENT_RBUTTONDOWN)
+   if (event == EVENT_LBUTTONDOWN)
    {
-      cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+      cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
    }
 }

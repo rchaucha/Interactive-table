@@ -93,7 +93,7 @@ int TrackingTools::traitementCouleur(VideoCapture video)
 
 
 // Permet de traquer les objets à partir de rectangles dessinés au début
-int TrackingTools::glassesTracking(VideoCapture video)
+void TrackingTools::glassesTracking(VideoCapture video)
 {
    auto initTrackers = [](VideoCapture& video, vector<Rect2d>& bboxes, Ptr<MultiTracker>& multiTracker)
    {
@@ -140,5 +140,4 @@ int TrackingTools::glassesTracking(VideoCapture video)
          initTrackers(video, bboxes, multiTracker);
       }
    }
-   return 0;
 }
