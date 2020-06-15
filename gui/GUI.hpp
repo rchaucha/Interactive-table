@@ -7,6 +7,7 @@
 #include <opencv2/videoio.hpp>
 #include "activities/SecondaryActivity.hpp"
 #include "activities/MainActivity.hpp"
+#include "gui\SFMLButtonsManager.hpp""
 
 class GUI
 {
@@ -25,6 +26,7 @@ private:
    void drawElements(const Activity& activity);
 
    cv::VideoCapture& _cap;
+   SFMLButtonsManager _buttons_manager;
    std::unique_ptr<MainActivity> _main_activity;
    std::vector<std::unique_ptr<SecondaryActivity>> _secondary_activities;
    sf::RenderWindow& _window;

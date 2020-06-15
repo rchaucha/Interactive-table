@@ -14,8 +14,11 @@ int main(int argc, char** argv)
       cerr << "La webcam est introuvable" << endl;
    else
    {
+      Mat frame;
+      cap >> frame;
+
       sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Interactive table", sf::Style::Fullscreen);
-      MenuActivity menu(window.getSize());
+      MenuActivity menu(window.getSize(), sf::Vector2u(frame.cols, frame.rows));
 
       GUI gui(&menu, window, cap);
 

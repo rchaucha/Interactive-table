@@ -18,10 +18,12 @@ public:
    virtual std::vector<std::unique_ptr<sf::Drawable>> getDrawables() const = 0;
 
 protected:
-   Activity(const sf::Vector2u window_size) : _window_size(window_size) {}
+   Activity(const sf::Vector2u window_size, const sf::Vector2u frame_size);
    
-   sf::Vector2f getWindowPos(const sf::Vector2f pos, const sf::Vector2u frame_size) const;
+   /* Convertit des coordonnées (nbr de pixels) de l'espace de la camera à celui de la fenêtre */
+   sf::Vector2f frame2Window(const sf::Vector2f frame_coordinates) const;
 
    const sf::Vector2u _window_size;
+   const sf::Vector2u _frame_size;
    cv::Mat _last_frame;
 };

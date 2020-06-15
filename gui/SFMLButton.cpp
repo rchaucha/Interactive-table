@@ -1,17 +1,22 @@
-#include "SFMLButton.h"
+#include "SFMLButton.hpp"
 
 using namespace sf;
 
-SFMLButton::SFMLButton(Vector2f pos, Vector2f size, Texture& texture) :
-   RectangleShape(size)
+SFMLButton::SFMLButton(Action action, Vector2f pos, Vector2f size, Texture& texture) :
+   RectangleShape(size),
+   _action(action)
 {
-   this->setPosition(pos);
-   this->setTexture(&texture);
-   this->setOutlineColor(Color::Black);
-   this->setOutlineThickness(1);
+   setPosition(pos);
+   setTexture(&texture);
 }
 
-bool SFMLButton::isClicked(const sf::Vector2f mouse_pos) const
+bool SFMLButton::press(const sf::Vector2f mouse_pos) const
 {
-   return this->getGlobalBounds().contains(mouse_pos);
+   if (getGlobalBounds().contains(mouse_pos))
+   {
+      _action();
+      return true;
+   }
+
+   return false;
 }

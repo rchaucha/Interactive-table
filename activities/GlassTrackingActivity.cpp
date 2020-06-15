@@ -7,7 +7,7 @@ using namespace std;
 using namespace sf;
 
 GlassTrackingActivity::GlassTrackingActivity(const sf::Vector2u window_size, Mat frame) :
-   SecondaryActivity(window_size)
+   SecondaryActivity(window_size, Vector2u(frame.cols, frame.rows))
 {
    _glasses_tracking.init(frame);
    _last_frame = frame;
@@ -36,16 +36,19 @@ vector<unique_ptr<Drawable>> GlassTrackingActivity::getDrawables() const
    vector<unique_ptr<sf::Drawable>> drawables;
    vector<cv::Rect2d> roi = _glasses_tracking.getROI();
 
+   // Rectangles correspondants aux verres
    for (cv::Rect2d rect : roi)
    {
-      sf::RectangleShape* rectangle = new RectangleShape(Vector2f(float(rect.width), float(rect.height)));
+      sf::RectangleShape* rectangle = new RectangleShape(frame2Window(Vector2f(rect.width, rect.height)));
+      rectangle->setPosition(frame2Window(Vector2f(rect.x, rect.y)));
       rectangle->setOutlineThickness(3.f);
       rectangle->setOutlineColor(sf::Color::Black);
-      sf::Vector2f pos = getWindowPos(sf::Vector2f(rect.x, rect.y), sf::Vector2u(_last_frame.cols, _last_frame.rows));
-      rectangle->setPosition(pos);
 
       drawables.push_back(unique_ptr<sf::RectangleShape>(rectangle));
    }
+
+   // Bouton de reset des trackers
+
 
    return drawables;
 }

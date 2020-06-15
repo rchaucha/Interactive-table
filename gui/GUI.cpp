@@ -47,15 +47,6 @@ void GUI::launch()
          drawElements(*activity);
       }
 
-
-     /* sf::RectangleShape rectangle(sf::Vector2f(100, 50));
-      rectangle.setPosition(600, 1000);
-      rectangle.setOutlineThickness(3.f);
-      rectangle.setOutlineColor(sf::Color::Black);
-      
-      _window.draw(rectangle);
-      */
-
       _window.display();
 
       // On propage les évènements aux activités si ce n'est pas la touche ESC
