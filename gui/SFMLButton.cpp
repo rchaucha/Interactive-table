@@ -4,19 +4,13 @@ using namespace sf;
 
 SFMLButton::SFMLButton(Action action, Vector2f pos, Vector2f size, Texture& texture) :
    RectangleShape(size),
-   _action(action)
+   execute(action)
 {
    setPosition(pos);
    setTexture(&texture);
 }
 
-bool SFMLButton::press(const sf::Vector2f mouse_pos) const
+bool SFMLButton::isSelected(const sf::Vector2f mouse_pos) const
 {
-   if (getGlobalBounds().contains(mouse_pos))
-   {
-      _action();
-      return true;
-   }
-
-   return false;
+   return getGlobalBounds().contains(mouse_pos);
 }

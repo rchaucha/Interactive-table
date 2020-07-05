@@ -8,6 +8,8 @@
 class Activity
 {
 public:
+   static long counter;
+
    /* Lancer l'activité */
    virtual void run(cv::Mat frame) = 0;
 
@@ -16,6 +18,8 @@ public:
 
    /* Proposer un event à récuperer. Si l'event est récupéré, on renvoie vrai */
    virtual std::vector<std::unique_ptr<sf::Drawable>> getDrawables() const = 0;
+
+   const long ID;
 
 protected:
    Activity(const sf::Vector2u window_size, const sf::Vector2u frame_size);

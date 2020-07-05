@@ -11,8 +11,9 @@ public:
 
    SFMLButton(const Action action, sf::Vector2f pos, sf::Vector2f size, sf::Texture& texture);
 
-   bool press(const sf::Vector2f mouse_pos) const;
+   /* Retourne vrai si la souris est sur le bouton, faux sinon */
+   bool isSelected(const sf::Vector2f mouse_pos) const;
 
-protected:
-   const Action _action;
+   /* Exécute l'action associée au bouton */
+   const Action execute;
 };

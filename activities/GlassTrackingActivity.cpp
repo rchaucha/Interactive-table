@@ -11,6 +11,7 @@ GlassTrackingActivity::GlassTrackingActivity(const sf::Vector2u window_size, Mat
 {
    _glasses_tracking.init(frame);
    _last_frame = frame;
+
 }
 
 void GlassTrackingActivity::run(cv::Mat frame)
@@ -46,9 +47,6 @@ vector<unique_ptr<Drawable>> GlassTrackingActivity::getDrawables() const
 
       drawables.push_back(unique_ptr<sf::RectangleShape>(rectangle));
    }
-
-   // Bouton de reset des trackers
-
-
+   
    return drawables;
 }

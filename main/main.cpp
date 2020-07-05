@@ -8,6 +8,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+   Activity::counter = 0;
+
    VideoCapture cap;
 
    if (!cap.open(0))

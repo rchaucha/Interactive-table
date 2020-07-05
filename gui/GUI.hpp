@@ -7,7 +7,7 @@
 #include <opencv2/videoio.hpp>
 #include "activities/SecondaryActivity.hpp"
 #include "activities/MainActivity.hpp"
-#include "gui\SFMLButtonsManager.hpp""
+#include "gui\SFMLMenu.hpp""
 
 class GUI
 {
@@ -18,6 +18,8 @@ public:
    void replaceMainActivity(MainActivity* new_activity) { _main_activity = std::unique_ptr<MainActivity>(new_activity); }
    void addSecondaryActivity(SecondaryActivity* new_activity) { _secondary_activities.push_back(std::unique_ptr<SecondaryActivity>(new_activity)); }
 
+   void addButtonToMenu(SFMLButton& but) { _buttons_manager.push_back(but); }
+
 private:
    /* Transmet l'event aux activités actives, il sera capté par la première qui en a besoin */
    void propagateEvent(sf::Event event);
@@ -26,7 +28,7 @@ private:
    void drawElements(const Activity& activity);
 
    cv::VideoCapture& _cap;
-   SFMLButtonsManager _buttons_manager;
+   SFMLMenu _buttons_manager;
    std::unique_ptr<MainActivity> _main_activity;
    std::vector<std::unique_ptr<SecondaryActivity>> _secondary_activities;
    sf::RenderWindow& _window;

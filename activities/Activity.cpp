@@ -3,8 +3,11 @@
 
 Activity::Activity(const sf::Vector2u window_size, const sf::Vector2u frame_size) :
    _window_size(window_size),
-   _frame_size(frame_size)
-{}
+   _frame_size(frame_size),
+   ID(counter)
+{
+   counter++;
+}
 
 sf::Vector2f Activity::frame2Window(const sf::Vector2f frame_coordinates) const
 {

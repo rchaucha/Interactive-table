@@ -1,11 +1,21 @@
 LONG TERME
 {
-	Transformer les outils de tracking / détection ainsi que les activités en DLL pour pouvoir les ajouter à la volée
+	- Transformer les outils de tracking / détection ainsi que les activités en DLL 
+	pour pouvoir les ajouter à la volée
 }
 
 COURT TERME
 {
-	!! Tests unitaires !!
-	Faire un menu : un seul bouton au centre qui affiche toutes les options de jeu lorsqu'on clique dessus
-	Animation : faire tourner une image autour d'un verre
+	- !! Tests unitaires !!
+	- Faire un menu : un seul bouton au centre qui affiche toutes les options de jeu 
+	lorsqu'on clique dessus
+	- Animation : faire tourner une image autour d'un verre
+}
+
+EN COURS
+{
+	- Fonctionnement d'un dossier : si un seul bouton, est le bouton
+	- Proxy pour gérer le menu : Chaque instance de Activity a un id unique qui lui 
+	permet d'accéder à un dossier dans le menu et le modifier
+	- Ajouter les flèches au menu sous forme de boutons
 }
