@@ -15,7 +15,7 @@ public:
    virtual void update(const cv::Mat frame) = 0;
 
    /* Renvoie les rectangles d'intérêt (ROI) */
-   std::vector<cv::Rect2d> getROI() const { return _roi; }
+   std::vector<cv::Rect2d> getROI() const noexcept { return _roi; }
 
 protected:
    cv::Ptr<cv::MultiTracker> _multi_tracker;

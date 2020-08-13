@@ -6,13 +6,12 @@
 class MenuProxy
 {
 public:
-   MenuProxy(SFMLMenu* menu): _menu(menu) {}
+   MenuProxy(SFMLMenuModel* menu): _menu(menu) {}
    ~MenuProxy() { _menu = nullptr; }
 
-   bool addButton(const long ID, SFMLButton &b);
-   bool removeButton(const long ID, SFMLButton &b);
+   bool addButton(const unsigned int ID, SFMLButton &b);
 
 private:
-   SFMLMenu* _menu;
+   SFMLMenuModel* _menu;
 };
 

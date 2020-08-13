@@ -6,7 +6,9 @@ LONG TERME
 
 COURT TERME
 {
-	- !! Tests unitaires !!
+	- Mettre constexpr au max de méthodes
+	- Mettre noexcept pareil
+	- Tests d'intégration
 	- Faire un menu : un seul bouton au centre qui affiche toutes les options de jeu 
 	lorsqu'on clique dessus
 	- Animation : faire tourner une image autour d'un verre

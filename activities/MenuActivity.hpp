@@ -3,7 +3,7 @@
 #include "activities/MainActivity.hpp"
 #include <opencv2/videoio.hpp>
 
-class MenuActivity : public MainActivity
+class MenuActivity : public SecondaryActivity
 {
 public:
    MenuActivity(const sf::Vector2u window_size, const sf::Vector2u frame_size);
