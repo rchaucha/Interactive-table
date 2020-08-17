@@ -11,10 +11,9 @@ GlassTrackingActivity::GlassTrackingActivity(const sf::Vector2u window_size, Mat
 {
    _glasses_tracking.init(frame);
    _last_frame = frame;
-
 }
 
-void GlassTrackingActivity::run(cv::Mat frame)
+void GlassTrackingActivity::update(cv::Mat frame)
 {
    _glasses_tracking.update(frame);
    _last_frame = frame;

@@ -7,7 +7,7 @@
 #include <opencv2/videoio.hpp>
 #include "activities/SecondaryActivity.hpp"
 #include "activities/MainActivity.hpp"
-#include "gui\SFMLMenu.hpp""
+#include "gui\menu\SFMLMenuModel.hpp""
 
 class GUI
 {
@@ -19,10 +19,9 @@ public:
    void addSecondaryActivity(SecondaryActivity* new_activity) { _secondary_activities.push_back(std::unique_ptr<SecondaryActivity>(new_activity)); }
    
 private:
-   /* Transmet l'event aux activités actives, il sera capté par la première qui en a besoin */
+   void handleEvents();
    void propagateEvent(sf::Event event);
-
-   /* Dessine tous les éléments de l'activité sur la fenetre */
+   void drawActivities(cv::Mat frame);
    void drawElements(const Activity& activity);
 
    cv::VideoCapture& _cap;

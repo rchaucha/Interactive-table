@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <gui/SFMLClickableSquare.hpp>
+#include <gui/menu/SFMLClickableSquare.hpp>
 
 class SFMLMenuView
 {
@@ -19,4 +19,3 @@ private:
    bool _is_first_page;
    bool _is_last_page;
 };
-

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "I_SFMLClickable.hpp"
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>

@@ -16,7 +16,6 @@ GUI::GUI(MainActivity* main_activity, sf::RenderWindow& window, VideoCapture& ca
 void GUI::launch()
 {
    Mat frame;
-   sf::Event event;
 
    // on laisse passer quelques images pour que la camera se stabilise
    for (int i = 0; i < 30; i++) { _cap >> frame; }
@@ -36,27 +35,25 @@ void GUI::launch()
 
       _window.clear(sf::Color::White);
 
-      // On affiche tous les éléments de l'activité principale
-      _main_activity->run(frame);
-      drawElements(*_main_activity);
-
-      // On affiche tous les éléments des activités secondaires
-      for (auto& activity : _secondary_activities)
-      {
-         activity->run(frame);
-         drawElements(*activity);
-      }
+      drawActivities(frame);
 
       _window.display();
 
-      // On propage les évènements aux activités si ce n'est pas la touche ESC
-      while (_window.pollEvent(event))
-      {
-         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
-            return;
-         else
-            propagateEvent(event);
-      }
+      handleEvents();
+   }
+}
+
+void GUI::drawActivities(Mat frame)
+{
+   // Activité principale
+   _main_activity->update(frame);
+   drawElements(*_main_activity);
+
+   // Activités secondaires
+   for (auto& activity : _secondary_activities)
+   {
+      activity->update(frame);
+      drawElements(*activity);
    }
 }
 
@@ -64,6 +61,20 @@ void GUI::drawElements(const Activity& activity)
 {
    for (const auto& e : activity.getDrawables())
       _window.draw(*e);
+}
+
+void GUI::handleEvents()
+{
+   sf::Event event;
+
+   // On propage les évènements aux activités si ce n'est pas la touche ESC
+   while (_window.pollEvent(event))
+   {
+      if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+         return;
+      else
+         propagateEvent(event);
+   }
 }
 
 void GUI::propagateEvent(sf::Event event)
@@ -74,3 +85,4 @@ void GUI::propagateEvent(sf::Event event)
 
    _main_activity->catchEvent(event);
 }
+

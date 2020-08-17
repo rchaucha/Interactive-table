@@ -9,7 +9,7 @@ class GlassTrackingActivity : public SecondaryActivity
 public:
    GlassTrackingActivity(const sf::Vector2u window_size, cv::Mat frame);
 
-   virtual void run(cv::Mat frame) override;
+   virtual void update(cv::Mat frame) override;
    virtual bool catchEvent(sf::Event event) override;
    virtual std::vector<std::unique_ptr<sf::Drawable>> getDrawables() const override;
 
