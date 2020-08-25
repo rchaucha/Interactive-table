@@ -8,7 +8,7 @@ class ToolsManager
 public:
    ToolsManager() {};
 
-   void glassTracking(int argc, char** argv);
+   void static glassTracking();
 
 private:
    void static detec(cv::VideoCapture cap);

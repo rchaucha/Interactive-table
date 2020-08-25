@@ -1,0 +1,19 @@
+LONG TERME
+{
+
+}
+
+COURT TERME
+{
+	- Mettre constexpr au max de méthodes
+	- Mettre noexcept pareil
+	- Tests d'intégration
+	- Faire un menu : un seul bouton au centre qui affiche toutes les options de jeu 
+	lorsqu'on clique dessus
+}
+
+EN COURS
+{
+	Reset tracker marche pas avec le bouton
+	Bouton close
+}

@@ -1,6 +1,13 @@
 #include "DetectionTools.hpp"
 
-vector<Rect2d> DetectionTools::glasses(Mat src)
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+
+using namespace cv;
+using namespace std;
+
+vector<Rect2d> DetectionTools::glasses(const Mat src)
 {
    Mat gray;
    if (src.channels() != 1)      // on tranforme l'image en niveaux de gris

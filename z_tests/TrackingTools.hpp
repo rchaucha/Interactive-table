@@ -18,8 +18,8 @@ class TrackingTools
 public:
    TrackingTools() {};
 
-   int traitementCouleur(VideoCapture);
-   int glassesTracking(VideoCapture);
+   static int traitementCouleur(VideoCapture);
+   static void glassesTracking(VideoCapture);
 
 private:
 };
