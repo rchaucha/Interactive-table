@@ -3,11 +3,16 @@
 #include "SFMLClickableSquare.hpp"
 #include <SFML/Graphics/Texture.hpp>
 
-class SFMLButton : SFMLClickableSquare
+class SFMLButton : public SFMLClickableSquare
 {
 public:
-   SFMLButton(const Action action, sf::Vector2f pos, sf::Vector2f size, sf::Texture& texture);
-   
-   // Exécute l'action associée au bouton
-   const Action execute;
+   SFMLButton(const std::string name, std::shared_ptr<Activity> activity, sf::Texture texture, sf::Vector2f pos = sf::Vector2f(0, 0), sf::Vector2f size = sf::Vector2f(0,0)) :
+      SFMLClickableSquare(activity, texture, pos, size),
+      _name(name)
+   {}
+
+   std::string getName() { return _name; }
+
+private:
+   const std::string _name;
 };

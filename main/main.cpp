@@ -1,15 +1,12 @@
 #include <iostream>
 
 #include "gui/GUI.hpp"
-#include "activities/MenuActivity.hpp"
 
 using namespace cv;
 using namespace std;
 
 int main(int argc, char** argv)
 {
-   Activity::counter = 0;
-
    VideoCapture cap;
 
    if (!cap.open(0))
@@ -20,9 +17,8 @@ int main(int argc, char** argv)
       cap >> frame;
 
       sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Interactive table", sf::Style::Fullscreen);
-      MenuActivity menu(window.getSize(), sf::Vector2u(frame.cols, frame.rows));
 
-      GUI gui(&menu, window, cap);
+      GUI gui(window, cap);
 
       gui.launch();
    }

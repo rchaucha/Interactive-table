@@ -7,26 +7,28 @@
 #include <opencv2/videoio.hpp>
 #include "activities/SecondaryActivity.hpp"
 #include "activities/MainActivity.hpp"
-#include "gui\menu\SFMLMenuModel.hpp""
+#include "activities/ActivitiesManager.hpp"
+#include "gui/menu/SFMLMenu.hpp""
 
 class GUI
 {
 public:
-   GUI(MainActivity* main_activity, sf::RenderWindow& window, cv::VideoCapture& cap);
+   GUI(sf::RenderWindow& window, cv::VideoCapture& cap);
 
    void launch();
-   void constexpr replaceMainActivity(MainActivity* new_activity) { _main_activity = std::unique_ptr<MainActivity>(new_activity); }
-   void addSecondaryActivity(SecondaryActivity* new_activity) { _secondary_activities.push_back(std::unique_ptr<SecondaryActivity>(new_activity)); }
-   
+
 private:
    void handleEvents();
    void propagateEvent(sf::Event event);
-   void drawActivities(cv::Mat frame);
+   void drawActivities();
    void drawElements(const Activity& activity);
+   void addActivity(std::shared_ptr<MainActivity> activity);
+   void addActivity(std::shared_ptr<SecondaryActivity> activity);
 
    cv::VideoCapture& _cap;
-   SFMLMenuModel _buttons_manager;
-   std::unique_ptr<MainActivity> _main_activity;
-   std::vector<std::unique_ptr<SecondaryActivity>> _secondary_activities;
+   cv::Mat _current_frame;
+   SFMLMenu _menu;
    sf::RenderWindow& _window;
+
+   ActivitiesManager* _activities_manager;
 };
