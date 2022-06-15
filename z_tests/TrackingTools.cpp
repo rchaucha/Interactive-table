@@ -67,8 +67,8 @@ int TrackingTools::traitementCouleur(VideoCapture video)
       if (dArea > 10000)
       {
          //calculate the position of the ball
-         int posX = dM10 / dArea;
-         int posY = dM01 / dArea;
+         int posX = (int)(dM10 / dArea);
+         int posY = (int)(dM01 / dArea);
 
          if (iLastX >= 0 && iLastY >= 0 && posX >= 0 && posY >= 0)
             line(imgLines, Point(posX, posY), Point(iLastX, iLastY), Scalar(0, 0, 255), 2);
@@ -126,8 +126,8 @@ void TrackingTools::glassesTracking(VideoCapture video)
 
       multiTracker->update(frame);
 
-      for (unsigned i = 0; i < multiTracker->getObjects().size(); i++)
-         rectangle(frame, multiTracker->getObjects()[i], Scalar(255, 0, 0), 2, 1);
+      for (const auto& obj : multiTracker->getObjects())
+         rectangle(frame, obj, Scalar(255, 0, 0), 2, 1);
 
       imshow("MultiTracker", frame);  // show image with the tracked object
 

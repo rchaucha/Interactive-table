@@ -14,6 +14,4 @@ COURT TERME
 
 EN COURS
 {
-	Reset tracker marche pas avec le bouton
-	Bouton close
 }

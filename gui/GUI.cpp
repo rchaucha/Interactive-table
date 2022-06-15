@@ -1,14 +1,12 @@
 #include "GUI.hpp"
 
-#include "activities/GlassTrackingActivity.hpp"
+#include "activities/GlassTracking/GlassTrackingActivity.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
+#include "activities/ActivitiesManager.hpp"
+#include <tools/RGBCameraInput.hpp>
 
-using namespace cv;
-using namespace std;
-
-
-GUI::GUI(sf::RenderWindow& window, VideoCapture& cap) :
-   _cap(cap),
+GUI::GUI(sf::RenderWindow& window) :
+   _rgb_cam(RGBCameraInput::getInstance()),
    _window(window),
    _activities_manager(ActivitiesManager::getInstance())
 {}
@@ -16,26 +14,31 @@ GUI::GUI(sf::RenderWindow& window, VideoCapture& cap) :
 void GUI::launch()
 {
    for (int i = 0; i < 30; i++)     // on laisse passer quelques images pour que la camera se stabilise
-      _cap >> _current_frame;
+      _rgb_cam->updateFrame();
    
-   if (_current_frame.rows == 0 || _current_frame.cols == 0)
+   if (_rgb_cam->isFrameEmpty())
    {
-      cerr << "Image vide" << endl;
+      std::cerr << "Image vide" << std::endl;
       return;
    }
 
-   addActivity(make_shared<GlassTrackingActivity>(_window.getSize(), sf::Vector2u(_current_frame.cols, _current_frame.rows)));
+   auto activity_shared_ptr = std::make_shared<GlassTrackingActivity>(new GlassTrackingActivityView(_window.getSize(), _rgb_cam->getFrameSize()));
+
+   addActivity(activity_shared_ptr);
 
    while (_window.isOpen())
    {
-      _cap >> _current_frame;
+      _rgb_cam->updateFrame();
 
-      if (_current_frame.rows == 0 || _current_frame.cols == 0)  // stop the program if no more images
+      if (_rgb_cam->isFrameEmpty())
+      {
+         std::cerr << "Image vide" << std::endl;
          return;
+      }
 
       _window.clear(sf::Color::Black);
 
-      _activities_manager->updateActivities(_current_frame);
+      _activities_manager->updateActivities();
       drawActivities();
 
       _window.display();
@@ -44,35 +47,35 @@ void GUI::launch()
    }
 }
 
-void GUI::drawActivities()
+void GUI::drawActivities() const noexcept
 {
    drawElements(*_activities_manager->getMainActivity());
 
-   for (auto& activity : _activities_manager->getSecondaryActivities())
+   for (const auto& activity : _activities_manager->getSecondaryActivities())
       drawElements(*activity);
 
    _menu.draw(_window);
 }
 
-void GUI::drawElements(const Activity& activity)
+void GUI::drawElements(const ActivityLogic& activity) const noexcept
 {
-   for (const auto& e : activity.getDrawables())
+   for (const auto& e : activity.getView()->getDrawables())
       _window.draw(*e);
 }
 
-void GUI::addActivity(shared_ptr<MainActivity> activity)
+void GUI::addActivity(std::shared_ptr<MainActivity> activity) noexcept
 {
    _activities_manager->addActivity(activity);
    _menu.addActivity(activity);
 }
 
-void GUI::addActivity(shared_ptr<SecondaryActivity> activity)
+void GUI::addActivity(std::shared_ptr<SecondaryActivity> activity) noexcept
 {
    _activities_manager->addActivity(activity);
    _menu.addActivity(activity);
 }
 
-void GUI::handleEvents()
+void GUI::handleEvents() const noexcept
 {
    sf::Event event;
 
@@ -86,14 +89,9 @@ void GUI::handleEvents()
    }
 }
 
-void GUI::propagateEvent(sf::Event event)
+void GUI::propagateEvent(sf::Event event) const noexcept
 {
-   if (_menu.catchEvent(event))
-   {
-      _activities_manager->menuButtonClicked(_menu.getLastAction(), _current_frame);
-      return;
-   }
-
-   _activities_manager->propagateEvent(event);
+   if (!_menu.catchEvent(event))
+      _activities_manager->propagateEvent(event);
 }
 

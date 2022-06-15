@@ -2,6 +2,8 @@
 #include "tools/detection/DetectionTools.hpp"
 
 #include <iostream>
+#include <execution>
+#include <chrono>
 
 namespace cv {
    namespace tracking {
@@ -29,7 +31,7 @@ namespace cv {
          Mat H, A, B;    //state
          std::vector<Rect2d> circles;
 
-         int frame_counter;
+         unsigned int frame_counter;
 
          //  Element-wise division of complex numbers in src1 and src2
          Mat divDFTs(const Mat& src1, const Mat& src2) const
@@ -73,7 +75,7 @@ namespace cv {
             meanStdDev(window, mean, StdDev);
             window = (window - mean[0]) / (StdDev[0] + eps);
 
-            // Gaussain weighting : fenêtre de Hann qui donne de l'importance aux pixels centraux et fait tomber à zéros ceux sur le bord
+            // Gaussian weighting : fenêtre de Hann qui donne de l'importance aux pixels centraux et fait tomber à zéros ceux sur le bord
             window = window.mul(hanWin);
          }
 
@@ -184,7 +186,7 @@ namespace cv {
          bool updateTracker(const Mat& image, Rect2d& boundingBox)
          {
             ///// On récupère le rectangle précédent et on le met à jour ///// 
-            Mat image_sub, image_hsv;
+            Mat image_sub;
             getRectSubPix(image, size, center, image_sub);
 
             if (image_sub.channels() != 1)      // on tranforme l'image en niveaux de gris
@@ -197,22 +199,21 @@ namespace cv {
             if (PSR < psrThreshold)
                return updateCircle(image, boundingBox);
 
-            //update location
+            // Update location
             center.x += delta_xy.x;
             center.y += delta_xy.y;
 
-            ///// On update tout par rapport à la nouvelle position ///// 
-            Mat img_sub_new;
-            getRectSubPix(image, size, center, img_sub_new);
+            ///// On update tout par rapport à la nouvelle position /////
+            getRectSubPix(image, size, center, image_sub);
 
-            if (img_sub_new.channels() != 1)
-               cvtColor(img_sub_new, img_sub_new, COLOR_BGR2GRAY);
+            if (image_sub.channels() != 1)
+               cvtColor(image_sub, image_sub, COLOR_BGR2GRAY);
 
-            preProcess(img_sub_new);
+            preProcess(image_sub);
 
             // new state for A and B
             Mat F, A_new, B_new;
-            dft(img_sub_new, F, DFT_COMPLEX_OUTPUT);
+            dft(image_sub, F, DFT_COMPLEX_OUTPUT);
             mulSpectrums(G, F, A_new, 0, true);
             mulSpectrums(F, F, B_new, 0, true);
 
@@ -231,25 +232,21 @@ namespace cv {
          }
 
 
-         // Update le tracker avec la détection de cercle
+         // Update le tracker avec la détection de cercle pour éviter des dérives
          bool updateCircle(const Mat& image, Rect2d& boundingBox)
          {
             double x = center.x, y = center.y;
             int w = size.width, h = size.height;
 
             Mat img_sub;
-            getRectSubPix(image, Size(2.0 * w, 2.0 * h), center, img_sub);   // on cherche un cercle dans cette fenêtre
+            getRectSubPix(image, Size((int)(2.0 * w), (int)(2.0 * h)), center, img_sub);   // on cherche un cercle dans cette fenêtre
             circles = DetectionTools::glasses(img_sub);
 
             if (circles.size() <= 0)
                return false;
 
             Rect2d cercle_choisi;
-            double max_PSR = 0,
-               PSR_candidate;
-            Point delta;
-
-            for (Rect2d c : circles)   // on détermine lequel des cercles est le plus proche du verre
+            for (double max_PSR = 0; const Rect2d& c : circles)   // on détermine lequel des cercles est le plus proche du verre
             {
                getRectSubPix(image, size, Point2d(c.x + x - w + c.width / 2.0, c.y + y - h + c.height / 2.0), img_sub);
 
@@ -258,7 +255,9 @@ namespace cv {
 
                preProcess(img_sub);  // normalisation, etc...
 
-               PSR_candidate = correlate(img_sub, delta);
+               Point delta;
+               double PSR_candidate = correlate(img_sub, delta);
+
                if (PSR_candidate > max_PSR)
                {
                   max_PSR = PSR_candidate;
@@ -283,15 +282,15 @@ namespace cv {
             if (H.empty()) // not initialized
                return false;
 
-            frame_counter++;
+            ++frame_counter;
 
-            if (frame_counter % 200 != 0)
-               return updateTracker(image, boundingBox);
-            else
+            if (frame_counter >= 200)
             {
                frame_counter = 0;
                return updateCircle(image, boundingBox);
             }
+            else
+               return updateTracker(image, boundingBox);
          }
 
       public:

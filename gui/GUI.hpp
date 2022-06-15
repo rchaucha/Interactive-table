@@ -1,32 +1,30 @@
 #pragma once
 
-#include <vector>
 #include <memory>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <opencv2/videoio.hpp>
-#include "activities/SecondaryActivity.hpp"
-#include "activities/MainActivity.hpp"
-#include "activities/ActivitiesManager.hpp"
-#include "gui/menu/SFMLMenu.hpp""
+#include "gui/menu/SFMLMenu.hpp"
+
+class ActivitiesManager;
+class MainActivity;
+class SecondaryActivity;
+class RGBCameraInput;
+class sf::Event;
 
 class GUI
 {
 public:
-   GUI(sf::RenderWindow& window, cv::VideoCapture& cap);
+   GUI(sf::RenderWindow& window);
 
    void launch();
 
 private:
-   void handleEvents();
-   void propagateEvent(sf::Event event);
-   void drawActivities();
-   void drawElements(const Activity& activity);
-   void addActivity(std::shared_ptr<MainActivity> activity);
-   void addActivity(std::shared_ptr<SecondaryActivity> activity);
+   void handleEvents() const noexcept;
+   void propagateEvent(sf::Event event) const noexcept;
+   void drawActivities() const noexcept;
+   void drawElements(const ActivityLogic& activity) const noexcept;
+   void addActivity(std::shared_ptr<MainActivity> activity) noexcept;
+   void addActivity(std::shared_ptr<SecondaryActivity> activity) noexcept;
 
-   cv::VideoCapture& _cap;
-   cv::Mat _current_frame;
+   RGBCameraInput* _rgb_cam;
    SFMLMenu _menu;
    sf::RenderWindow& _window;
 

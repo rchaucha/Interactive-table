@@ -5,7 +5,7 @@
 class GlassesTracking : public Tracking
 {
 public:
-   virtual bool init(cv::Mat frame) override;
-   virtual void update(cv::Mat frame) override;
+   virtual bool init(const cv::Mat& frame) override;
+   virtual void update(const cv::Mat& frame) override;
 };
 

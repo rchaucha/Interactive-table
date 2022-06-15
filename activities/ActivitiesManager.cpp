@@ -1,12 +1,13 @@
 #include "ActivitiesManager.hpp"
 
+#include <execution>
 #include "activities/NoneActivity.hpp"
-#include <activities\GlassTrackingActivity.hpp>
+#include "activities\GlassTracking\GlassTrackingActivity.hpp"
 
 using namespace cv;
 using namespace std;
 
-std::vector<std::shared_ptr<Activity>> ActivitiesManager::_all_activities;
+std::vector<std::shared_ptr<ActivityLogic>> ActivitiesManager::_all_activities;
 std::shared_ptr<MainActivity> ActivitiesManager::_main_activity = make_shared<NoneActivity>();
 std::vector<std::shared_ptr<SecondaryActivity>> ActivitiesManager::_secondary_activities;
 
@@ -21,60 +22,43 @@ ActivitiesManager* ActivitiesManager::getInstance()
    return _instance;
 }
 
-void ActivitiesManager::launchActivity(shared_ptr<MainActivity> activity, Mat frame)
+void ActivitiesManager::launchActivity(shared_ptr<MainActivity> activity)
 {
    _main_activity = activity;
-   activity->run(frame);
+   activity->run();
 }
 
-void ActivitiesManager::launchActivity(shared_ptr<SecondaryActivity> activity, Mat frame)
+void ActivitiesManager::launchActivity(shared_ptr<SecondaryActivity> activity)
 {
    _secondary_activities.push_back(activity);
-   activity->run(frame);
+   activity->run();
 }
 
-void ActivitiesManager::launchActivity(shared_ptr<Activity> activity,  cv::Mat frame)
+void ActivitiesManager::launchActivity(shared_ptr<ActivityLogic> activity)
 {
    if (shared_ptr<MainActivity> main_activity = dynamic_pointer_cast<MainActivity>(activity))
-      launchActivity(main_activity, frame);
+      launchActivity(main_activity);
    
    else if (shared_ptr<SecondaryActivity> sec_activity = dynamic_pointer_cast<SecondaryActivity>(activity))
-      launchActivity(sec_activity, frame);
+      launchActivity(sec_activity);
 }
 
-void ActivitiesManager::updateActivities(Mat frame)
+void ActivitiesManager::updateActivities()
 {
-   if (_main_activity != nullptr)
-      _main_activity->update(frame);
+   if (_main_activity)
+      _main_activity->update();
 
-   for (auto& activity : _secondary_activities)
-      activity->update(frame);
-}
-
-void ActivitiesManager::menuButtonClicked(SFMLMenu::LastAction last_action, Mat frame)
-{
-   switch (last_action.type)
-   {
-   case SFMLMenu::APP_LAUNCHER:
-      launchActivity(last_action.element_clicked->getActivity(), frame);
-      break;
-   case SFMLMenu::APP_CLOSER:
-      stopActivity(last_action.element_clicked->getActivity()->getId());
-      break;
-   case SFMLMenu::BUTTON:
-      shared_ptr<SFMLButton> b = static_pointer_cast<SFMLButton>(last_action.element_clicked);
-      b->getActivity()->buttonClicked(b->getName());
-      break;
-   }
+   std::for_each(std::execution::par_unseq, _secondary_activities.begin(), _secondary_activities.end(),
+      [](auto& activity) { activity->update(); });
 }
 
 void ActivitiesManager::propagateEvent(sf::Event event)
 {
    for (auto& activity : _secondary_activities)
-      if (activity->catchEvent(event))
+      if (activity->getView()->catchEvent(event))
          return;
 
-   _main_activity->catchEvent(event);
+   _main_activity->getView()->catchEvent(event);
 }
 
 void ActivitiesManager::stopActivity(const unsigned int id)
@@ -112,11 +96,11 @@ int ActivitiesManager::getRunningSecondaryActivityIndexFromId(const unsigned int
 {
    int ind = 0;
 
-   for (auto& a : _secondary_activities)
+   for (const auto& a : _secondary_activities)
    {
       if (a->getId() == id)
          break;
-      ind++;
+      ++ind;
    }
 
    if (ind == _secondary_activities.size())

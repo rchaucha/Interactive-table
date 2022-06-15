@@ -10,7 +10,7 @@ public:
 
    void static glassTracking();
 
-private:
    void static detec(cv::VideoCapture cap);
+private:
 };
 

@@ -1,14 +1,11 @@
 #pragma once
 
-#include "Activity.hpp"
+#include "ActivityLogic.hpp"
 
-class SecondaryActivity : public Activity
+class SecondaryActivity : public ActivityLogic
 {
-public:
-   //virtual std::shared_ptr<SecondaryActivity> makeUniqueSecondary() const = 0;
-
 protected:
-   SecondaryActivity(const sf::Vector2u window_size, const sf::Vector2u frame_size) :
-      Activity(window_size, frame_size) {}
+   SecondaryActivity() {}
 
+   virtual ~SecondaryActivity() {}
 };

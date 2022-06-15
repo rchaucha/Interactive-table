@@ -2,56 +2,43 @@
 
 #include <tools\FilesManager.hpp>
 #include <SFML/Window/Event.hpp>
-#include "activities\Activity.hpp"
+#include "activities\ActivityLogic.hpp"
 #include "activities/NoneActivity.hpp"
+#include "commands/OpenAppCommand.hpp"
+#include "commands/CloseAppCommand.hpp"
 
-using namespace std;
-using namespace sf;
 
-
-class SFMLMenu::SFMLAppLauncher : public SFMLClickableSquare
+void SFMLMenu::draw(sf::RenderWindow& window) const
 {
-public:
-   SFMLAppLauncher(shared_ptr<Activity> activity, Texture texture) :
-      SFMLClickableSquare(activity, texture)
-   {}
-};
+   const auto w_size = window.getSize();
 
-class SFMLMenu::SFMLAppCloser : public SFMLClickableSquare
-{
-public:
-   SFMLAppCloser(shared_ptr<Activity> activity) :
-      SFMLClickableSquare(activity, FilesManager::loadImgTexture("close.png"))
-   {}
-};
+   const float but_size =  w_size.y / 17.f,    // taille des boutons
+         space_size = but_size / 4.f;          // taille des espaces entre les boutons
 
-void SFMLMenu::draw(RenderWindow& window) const
-{
-   auto w_size = window.getSize();
+   const std::size_t nbr_of_but = getNbrButtonsOnCurrentPage();
+   const unsigned int nbr_of_but_on_first_line = std::min((unsigned int)nbr_of_but, BUTTONS_PER_ROW),
+         nbr_of_lines = (unsigned int)ceil(nbr_of_but / 3.f);
 
-   float but_size = BUTTONS_PER_ROW * w_size.y / 50.f;    // taille des boutons
-   float space_size = (BUTTONS_PER_ROW - 1) * but_size / 4.f;   // taille des espaces entre les boutons
+   const float menu_width = nbr_of_but_on_first_line * but_size + (nbr_of_but_on_first_line - 1) * space_size;
+   const float menu_height = nbr_of_lines * but_size + (nbr_of_lines - 1) * space_size;
 
-   float y = (w_size.y - but_size - space_size) / 2.f;
-   float x = (w_size.x - but_size - space_size) / 2.f;
+   float x = (w_size.x - menu_width) / 2.f;
+   float y = (w_size.y - menu_height) / 2.f;
    const float x0 = x;
 
-   sf::RectangleShape* rect;
-
-   unsigned int i = 1;
-   for (const auto& b : getCurrentConstButtons())
+   for (unsigned int i = 1; const auto& b : getCurrentConstButtons())
    {
       b->setPosition(x, y);
-      b->setSize(Vector2f(but_size, but_size));
+      b->setSize(sf::Vector2f(but_size, but_size));
 
-      rect = new RectangleShape(*b);
+      sf::RectangleShape rect(*b);
 
-      rect->setTexture(&b->getButtonTexture());    // peut être changé avec une aggrégation d'un rect au lieu d'un héritage (bouton non graphique avec une composante graphique)
+      rect.setTexture(&b->getButtonTexture());    // peut être changé avec une aggrégation d'un rect au lieu d'un héritage (bouton non graphique avec une composante graphique)
       
-      rect->setOutlineThickness(1.f);
-      rect->setOutlineColor(sf::Color::White);
+      rect.setOutlineThickness(1.f);
+      rect.setOutlineColor(sf::Color::White);
 
-      window.draw(*rect);
+      window.draw(rect);
 
       if (i % BUTTONS_PER_ROW == 0)  // on revient à la ligne
       {
@@ -61,35 +48,19 @@ void SFMLMenu::draw(RenderWindow& window) const
       else
          x += but_size + space_size;
 
-      i++;
+      ++i;
    }
 }
 
-bool SFMLMenu::catchEvent(Event event)
+bool SFMLMenu::catchEvent(sf::Event event) const
 {
    if (event.type == sf::Event::MouseButtonPressed)
    {
-       for (auto& b : getCurrentButtons())
+      for (const auto& b : getCurrentButtons())
       {
-         if (b->isSelected(Vector2f((float)event.mouseButton.x, (float)event.mouseButton.y)))
+         if (b->isSelected(sf::Vector2f((float)event.mouseButton.x, (float)event.mouseButton.y)))
          {
-            _last_action.element_clicked = b;
-
-            if (typeid(*b) == typeid(SFMLAppLauncher))
-            {
-               openActivity(*b);
-               _last_action.type = ActionType::APP_LAUNCHER;
-            }
-
-            else if (typeid(*b) == typeid(SFMLAppCloser))
-            {
-               closeActivity(*b);
-               _last_action.type = ActionType::APP_CLOSER;
-            }
-
-            else if (typeid(*b) == typeid(SFMLButton))
-               _last_action.type = ActionType::BUTTON;
-
+            b->execute();
             return true;
          }
       }
@@ -98,70 +69,61 @@ bool SFMLMenu::catchEvent(Event event)
    return false;
 }
 
-void SFMLMenu::addActivity(shared_ptr<Activity> activity, int index)
+void SFMLMenu::addActivity(std::shared_ptr<ActivityLogic> activity)
 {
-   Texture icon = FilesManager::loadActivityIcon(activity->getFolderName());
-   
-   if (index == -1 || _buttons.size() == 0)
-      _buttons.push_back(make_shared<SFMLAppLauncher>(activity, icon));
-   else
-      _buttons.insert(_buttons.begin() + index, make_shared<SFMLAppLauncher>(activity, icon));
+   addActivity(activity, _buttons.size());
 }
 
-void SFMLMenu::openActivity(SFMLClickableSquare& launcher)
+void SFMLMenu::addActivity(std::shared_ptr<ActivityLogic> activity, std::size_t index)
 {
-   auto it = findClickableSquare(launcher);
-   int ind = distance(_buttons.begin(), it);
+   sf::Texture icon = FilesManager::loadActivityIcon(activity->getFolderName());
+
+   auto new_button = std::make_shared<SFMLSquareButton>(new OpenAppCommand(index, activity, this), icon);
+
+   if (index == _buttons.size() || _buttons.size() == 0)
+      _buttons.push_back(new_button);
+   else
+      _buttons.insert(_buttons.begin() + index, new_button);
+}
+
+void SFMLMenu::openActivity(std::shared_ptr<ActivityLogic> activity, const std::size_t button_index)
+{
+   auto it = _buttons.begin() + button_index;
 
    _buttons.erase(it);
 
-   auto close_button = std::make_shared<SFMLAppCloser>(launcher.getActivity());
-   auto b_to_insert = launcher.getActivity()->getButtons();
+   auto close_button = std::make_shared<SFMLSquareButton>(new CloseAppCommand(button_index, activity, this), FilesManager::loadImgTexture("close.png"));
+   auto b_to_insert = activity->getView()->getMenuButtons();
 
-   _buttons.insert(_buttons.begin() + ind, b_to_insert.begin(), b_to_insert.end());
-   _buttons.insert(_buttons.begin() + ind + b_to_insert.size(), close_button);
+   _buttons.insert(_buttons.begin() + button_index, b_to_insert.begin(), b_to_insert.end());
+   _buttons.insert(_buttons.begin() + button_index + b_to_insert.size(), close_button);
 }
 
-void SFMLMenu::closeActivity(SFMLClickableSquare& closer)
+void SFMLMenu::closeActivity(std::shared_ptr<ActivityLogic> activity, const std::size_t button_index)
 {
-   auto it = findClickableSquare(closer);
-   int ind = distance(_buttons.begin(), it);
-   size_t nbr_buttons = closer.getActivity()->getButtons().size();
+   size_t nbr_buttons = activity->getView()->getMenuButtons().size() + 1;  // on ajoute le bouton close
 
-   _buttons.erase(it - nbr_buttons, it + 1);
+   auto it = _buttons.begin() + button_index;
+
+   _buttons.erase(it, it + nbr_buttons);
 
    // on remet en place le laucher
-   addActivity(closer.getActivity(), ind);
+   addActivity(activity, button_index);
 }
 
-vector<shared_ptr<SFMLClickableSquare>> SFMLMenu::getCurrentButtons() const
+std::vector<std::shared_ptr<SFMLSquareButton>> SFMLMenu::getCurrentButtons() const
 {
    if (_buttons.size() == 0)
-      return vector<shared_ptr<SFMLClickableSquare>>();
+      return std::vector<std::shared_ptr<SFMLSquareButton>>();
 
    auto first_of_page = _buttons.begin() + getFirstIndexOfPage();
-   unsigned int ind_first_of_page = distance(_buttons.begin(), first_of_page);
-   unsigned int nbr_buttons_on_page = _buttons.size() - getFirstIndexOfPage();
+   std::size_t ind_first_of_page = distance(_buttons.begin(), first_of_page);
+   std::size_t nbr_buttons_on_page = _buttons.size() - getFirstIndexOfPage();
 
-   vector<shared_ptr<SFMLClickableSquare>> page_vector;
+   std::vector<std::shared_ptr<SFMLSquareButton>> page_vector;
 
-   for (unsigned int i = 0; i < nbr_buttons_on_page; i++)
+   for (std::size_t i = 0; i < nbr_buttons_on_page; i++)
       page_vector.push_back(_buttons[ind_first_of_page + i]);
 
    return page_vector;
-}
-
-const vector<shared_ptr<SFMLClickableSquare>> SFMLMenu::getCurrentConstButtons() const
-{
-   return getCurrentButtons();
-}
-
-std::vector<std::shared_ptr<SFMLClickableSquare>>::iterator SFMLMenu::findClickableSquare(SFMLClickableSquare& launcher)
-{
-   auto it = _buttons.begin();
-   for (; it < _buttons.end(); it++)
-      if (launcher == **it)
-         break;
-
-   return it;
 }

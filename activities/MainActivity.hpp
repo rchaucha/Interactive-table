@@ -1,14 +1,11 @@
 #pragma once
 
-#include "Activity.hpp"
+#include "ActivityLogic.hpp"
 
-class MainActivity : public Activity
+class MainActivity : public ActivityLogic
 {
-public:
-  // virtual std::shared_ptr<MainActivity> makeUniqueMain() const = 0;
-
 protected:
-   MainActivity(const sf::Vector2u window_size, const sf::Vector2u frame_size) : 
-      Activity(window_size, frame_size){}
+   MainActivity() {}
 
+   virtual ~MainActivity() {}
 };

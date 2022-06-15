@@ -3,43 +3,46 @@
 #include "tools/detection/DetectionTools.hpp"
 #include <opencv2/highgui.hpp>
 
-using namespace std;
-using namespace cv;
 
-bool GlassesTracking::init(const Mat frame)
+bool GlassesTracking::init(const cv::Mat& frame)
 {
    _roi = DetectionTools::glasses(frame);
 
    if (_roi.size() < 1)
       return false;
 
-   _multi_tracker = MultiTracker::create();
+   _multi_tracker = cv::MultiTracker::create();
 
-   for (int i = 0; i < _roi.size(); i++)
-      _multi_tracker->add(TrackerGlass::create(), frame, Rect2d(_roi[i]));
+   for (const auto& rect : _roi)
+      _multi_tracker->add(cv::TrackerGlass::create(), frame, rect);
 
    return true;
 }
 
-void GlassesTracking::update(const Mat frame)
+void GlassesTracking::update(const cv::Mat& frame)
 {
-   // Si des verres ont été détecté, on traque, sinon on détecte
+   // If glasses have been detected, we track them, otherwise we try to detect
    if (_roi.size() > 0)
    {
       _roi.clear();
 
       _multi_tracker->update(frame);
 
-      for (unsigned i = 0; i < _multi_tracker->getObjects().size(); i++)
+      for (const auto& object : _multi_tracker->getObjects())
       {
-         _roi.push_back(_multi_tracker->getObjects()[i]);
+         _roi.push_back(object);
 
-         rectangle(frame, _multi_tracker->getObjects()[i], Scalar(255, 0, 0), 2, 1);  // DEBUG
+      #ifdef _DEBUG
+         rectangle(frame, object, cv::Scalar(255, 0, 0), 2, 1);
+      #endif
       }
-      
    }
    else
+   {
       init(frame);
+   }
    
-   imshow("MultiTracker", frame);  // DEBUG
+#ifdef _DEBUG
+   imshow("MultiTracker", frame);
+#endif
 }

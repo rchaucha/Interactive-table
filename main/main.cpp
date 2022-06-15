@@ -1,27 +1,30 @@
 #include <iostream>
 
 #include "gui/GUI.hpp"
-
-using namespace cv;
-using namespace std;
+#include "tools/RGBCameraInput.hpp"
+#include <tools/AudioPlayer.hpp>
 
 int main(int argc, char** argv)
 {
-   VideoCapture cap;
+   /*
+   AudioPlayer::playSound("werewolf", "music.ogg");
 
-   if (!cap.open(0))
-      cerr << "La webcam est introuvable" << endl;
-   else
+   std::string a;
+   std::cin >> a;
+   */
+   
+   RGBCameraInput* rbg_cam = RGBCameraInput::getInstance();
+   
+   if (!rbg_cam->openCamera())
    {
-      Mat frame;
-      cap >> frame;
-
-      sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Interactive table", sf::Style::Fullscreen);
-
-      GUI gui(window, cap);
-
-      gui.launch();
+      std::cerr << "La webcam est introuvable" << std::endl;
+      return -1;
    }
+   
+   sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Interactive table", sf::Style::Fullscreen);
 
+   GUI gui(window);
+   gui.launch();
+   
    return 0;
 }

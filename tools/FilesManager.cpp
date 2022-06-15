@@ -1,6 +1,7 @@
 #include "FilesManager.hpp"
 
 #include <iostream>
+#include <SFML/Audio/Music.hpp>
 
 using namespace sf;
 using namespace std;
@@ -23,4 +24,9 @@ Texture FilesManager::loadImgTexture(const string path)
 Texture FilesManager::loadActivityIcon(const string activity_file_name)
 {
    return loadImgTexture(activity_file_name + "/icon.png");
+}
+
+std::string FilesManager::getSoundFilepath(const string& activity_file_name, const string& file_name)
+{
+   return FILES_PATH + "sounds/" + activity_file_name + "/" + file_name;
 }

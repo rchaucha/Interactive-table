@@ -21,8 +21,6 @@ using namespace std;
 
 void ToolsManager::glassTracking()
 {
-   
-
    //thread t(ToolsManager::detec, cap);
 
    //tracker.traitementCouleur(cap);
@@ -35,7 +33,7 @@ void ToolsManager::detec(VideoCapture cap)
 {
    Mat src;
    vector<Vec3f> circles;
-   int R_MIN = 40, R_MAX = 70;
+   int R_MIN = 20, R_MAX = 30;
 
    while (1) {
       Mat gray;
@@ -50,8 +48,8 @@ void ToolsManager::detec(VideoCapture cap)
       for (size_t i = 0; i < circles.size(); i++)
       {
          Vec3f c = circles[i];
-         Point center = Point(c[0], c[1]);
-         int radius = c[2];
+         Point center = Point((int)c[0], (int)c[1]);
+         int radius = (int)c[2];
 
          circle(src, center, 1, Scalar(0, 100, 100), 3, LINE_AA);    // dessiner le centre et le cercle
          circle(src, center, radius, Scalar(255, 0, 255), 3, LINE_AA);

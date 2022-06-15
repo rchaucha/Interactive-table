@@ -7,15 +7,15 @@
 class Tracking
 {
 public:
-   /* Initialise les trackers
-      Retourne faux si aucun verre n'a été trouvé */
-   virtual bool init(const cv::Mat frame) = 0;
+   /* Init trackers
+      Return false if no glass has been found */
+   virtual bool init(const cv::Mat& frame) = 0;
 
-   /* Met à jour les trackers */
-   virtual void update(const cv::Mat frame) = 0;
+   /* Updates trackers */
+   virtual void update(const cv::Mat& frame) = 0;
 
-   /* Renvoie les rectangles d'intérêt (ROI) */
-   std::vector<cv::Rect2d> getROI() const noexcept { return _roi; }
+   /* Return rectangles of interest (ROI) */
+   const std::vector<cv::Rect2d>& getROI() const noexcept { return _roi; }
 
 protected:
    cv::Ptr<cv::MultiTracker> _multi_tracker;
